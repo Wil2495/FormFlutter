@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class CustomInputField extends StatefulWidget {
   final void Function(String)? onChanged;
+  final TextEditingController? controller;
   final String label;
   final TextInputType? inputype;
   final bool isPassword;
@@ -11,6 +12,7 @@ class CustomInputField extends StatefulWidget {
   const CustomInputField(
       {Key? key,
       this.onChanged,
+      this.controller,
       required this.label,
       this.inputype,
       this.isPassword = false,
@@ -41,6 +43,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
+                controller: widget.controller,
                 obscureText: _obscureText,
                 keyboardType: widget.inputype,
                 onChanged: (text) {

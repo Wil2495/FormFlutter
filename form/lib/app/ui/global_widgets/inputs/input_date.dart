@@ -29,7 +29,7 @@ class _InputDateState extends State<InputDate> {
             IconButton(
                 onPressed: getFecha,
                 icon: const Icon(Icons.date_range,
-                    color: ColorsApp.principalColor)),
+                    color: ColorsApp.secondaryPromoColor)),
             RichText(
               textAlign: TextAlign.end,
               text: TextSpan(

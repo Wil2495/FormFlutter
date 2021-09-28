@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:form/app/theme/colors/colors.dart';
 import 'package:form/app/ui/global_widgets/dialogs/progress_dialog.dart';
-import 'package:form/app/ui/views/form/form_view.dart';
+import 'package:form/app/ui/views/register/register_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -95,7 +95,7 @@ class _HomeViewState extends State<HomeView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                    return FormView();
+                    return RegisterView();
                   }),
                 );
               }

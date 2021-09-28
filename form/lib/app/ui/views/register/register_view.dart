@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:form/app/theme/colors/colors.dart';
 import 'package:form/app/ui/global_widgets/dialogs/progress_dialog.dart';
@@ -12,17 +10,18 @@ import 'package:form/app/utils/email_validator.dart';
 import 'package:form/app/utils/name_validator.dart';
 import 'package:intl/intl.dart';
 
-class FormView extends StatelessWidget {
-  FormView({Key? key}) : super(key: key);
-  final keyFormulario = GlobalKey<FormState>();
-  final nombreControlador = TextEditingController();
-  final apellidoControlador = TextEditingController();
-  final correoControlador = TextEditingController();
-  final celularControlador = TextEditingController();
-  final documentoControlador = TextEditingController();
-  final tipodocControlador = TextEditingController();
-  final fechaControlador =
+class RegisterView extends StatelessWidget {
+  RegisterView({Key? key}) : super(key: key);
+  final keyForm = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final docController = TextEditingController();
+  final typeDocController = TextEditingController();
+  final dateController =
       TextEditingController(text: DateFormat.yMMMd().format(DateTime.now()));
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +30,7 @@ class FormView extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Form(
-              key: keyFormulario,
+              key: keyForm,
               child: ListView(
                 children: [
                   Header(),
@@ -48,6 +47,8 @@ class FormView extends StatelessWidget {
                   const SizedBox(height: 10.0),
                   _showDate(),
                   const SizedBox(height: 10.0),
+                  _showPhoneNumber(),
+                  const SizedBox(height: 10.0),
                   _showEmail(),
                   const SizedBox(height: 10.0),
                   _showPassword(),
@@ -60,7 +61,7 @@ class FormView extends StatelessWidget {
         ));
   }
 
-  _showTitle() {
+  Widget _showTitle() {
     return const Text(
       "Registro",
       style: TextStyle(
@@ -72,7 +73,7 @@ class FormView extends StatelessWidget {
 
   Widget _showName() {
     return CustomInputField(
-      //  onChanged: nombreControlador.text,
+      controller: nameController,
       label: "Nombre",
       inputype: TextInputType.emailAddress,
       validator: (text) {
@@ -86,6 +87,7 @@ class FormView extends StatelessWidget {
 
   Widget _showLastName() {
     return CustomInputField(
+      controller: lastNameController,
       label: "Apellido",
       inputype: TextInputType.emailAddress,
       validator: (text) {
@@ -115,9 +117,9 @@ class FormView extends StatelessWidget {
         'icon': const Icon(Icons.access_alarms),
       }
     ];
-    final TextEditingController _documentType = TextEditingController();
+
     return InputFormSelect(
-      controladorText: _documentType,
+      controladorText: typeDocController,
       itemsDoc: _itemsDoc,
       labelText: "Tipo Documento",
     );
@@ -126,12 +128,27 @@ class FormView extends StatelessWidget {
   Widget _showDocument() {
     return CustomInputField(
       label: "Número documento",
-      //onChanged: controller.onEmailChange,
+      controller: docController,
       inputype: TextInputType.number,
       validator: (text) {
-        if (!text!.isEmpty) {
+        if (text!.isNotEmpty) {
           return null;
         }
+        return "número invalido";
+      },
+    );
+  }
+
+  Widget _showPhoneNumber() {
+    return CustomInputField(
+      label: "Número celular",
+      controller: phoneNumberController,
+      inputype: TextInputType.number,
+      validator: (text) {
+        if (text!.isNotEmpty) {
+          if (text.trim().length <= 10) return null;
+        }
+
         return "número invalido";
       },
     );
@@ -140,7 +157,7 @@ class FormView extends StatelessWidget {
   Widget _showEmail() {
     return CustomInputField(
       label: "Correo",
-      //onChanged: controller.onEmailChange,
+      controller: emailController,
       inputype: TextInputType.emailAddress,
       validator: (text) {
         if (isValidEmail(text)) {
@@ -153,7 +170,7 @@ class FormView extends StatelessWidget {
 
   Widget _showDate() {
     return InputDate(
-      controlador: fechaControlador,
+      controlador: dateController,
       text: 'Seleccione fecha de nacimiento',
     );
   }
@@ -161,8 +178,8 @@ class FormView extends StatelessWidget {
   Widget _showPassword() {
     return CustomInputField(
       label: "Contraseña",
+      controller: passwordController,
       isPassword: true,
-      //  onChanged: controller.onPasswordChange,
       validator: (text) {
         if (text!.trim().length >= 6) {
           return null;
@@ -175,43 +192,32 @@ class FormView extends StatelessWidget {
   Widget _showButton(context) {
     return ElevatedButton(
         onPressed: () async {
-          if (keyFormulario.currentState!.validate()) setInfo(context);
+          if (keyForm.currentState!.validate()) setInfo(context);
         },
         child: const Text('Enviar'));
   }
 
   Future setInfo(context) async {
-    var jsonBody = {};
-    jsonBody["Nombre"] = nombreControlador.text;
-    jsonBody["Apellido"] = apellidoControlador.text;
-    jsonBody["Tipo_Documento"] = tipodocControlador.text;
-    jsonBody["Documento"] = documentoControlador.text;
-    jsonBody["Correo"] = correoControlador.text;
-    jsonBody["Celular"] = celularControlador.text;
-    jsonBody["Fecha"] = fechaControlador.text;
-    String str = json.encode(jsonBody);
-    print("//*****************ESTE ES EL JSON**************// \n");
-    print(str);
-    print("//*****************ESTE ES EL JSON**************// \n");
+    Map<String, dynamic> jsonBody = {
+      'name': nameController.text,
+      'lastName': lastNameController.text,
+      'typeDocument': typeDocController.text,
+      'document': docController.text,
+      'email': emailController.text,
+      'phone': phoneNumberController.text,
+      'date': dateController.text,
+    };
+    /*  print("//*****************ESTE ES EL MAP**************// \n");
+    print(jsonBody);
+    print("//*****************ESTE ES EL MAP**************// \n"); */
     ProgressDialog.show(context);
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 3));
     Navigator.pop(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) {
-        return const ProfileView();
-      }),
-    );
-
-    /*final response =
-        await http.post(Uri.http("https://plm.com.co", "/test"), body: {
-      "nombre": nombreControlador.text,
-      "apellido": apellidoControlador.text,
-      "Tipo_doc": tipodocControlador.text,
-      "documento": documentoControlador.text,
-      "correo": correoControlador.text,
-      "celular": celularControlador.text,
-      "fecha": fechaInput,
-    })*/
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return ProfileView(
+        data: jsonBody,
+      );
+    }), (route) => false);
   }
 }
