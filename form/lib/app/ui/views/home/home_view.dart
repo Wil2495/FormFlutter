@@ -88,10 +88,7 @@ class _HomeViewState extends State<HomeView> {
   Widget _showButton() {
     return ElevatedButton(
         onPressed: _isChecked == true
-            ? () async {
-                ProgressDialog.show(context);
-                await Future.delayed(const Duration(seconds: 1));
-                Navigator.pop(context);
+            ? () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
